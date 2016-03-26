@@ -17,13 +17,19 @@ import javax.swing.JPanel;
  */
 public class OXGame {
 
+    public enum GamerCode{
+        notStarted,
+        Watcher,
+        O,
+        X
+    }
     /**
      * @param args the command line arguments
      */
     private OXGameFrame gameFrame;
     private boolean gameStart=false;
-    private int gamerCode=1; // -2 - notStarted, -1 - watcher, 0 - O, 1 - X
-    private boolean your=false;
+    private GamerCode yourCode=GamerCode.notStarted;
+    private GamerCode cureCode=GamerCode.notStarted;
     private int[][] field=new int[3][3]; // -1 - none, 0 - O, 1 - X
     public OXGame(){
         for(int i=0; i<3; i++)
@@ -36,19 +42,36 @@ public class OXGame {
     public int[][] getFiled(){
         return field;
     }
-    public int getGamerCode(){
-        return gamerCode;
+    public GamerCode getCureCode(){
+        return cureCode;
+    }
+    public GamerCode getYourCode(){
+        return yourCode;
+    }
+    public void startGame(int needGame){
+        if(gameStart==false){
+            gameStart=true;
+            if(needGame==-1){
+                // запрос на сервер с получением информации о опоненте
+            }
+            else{
+                // запрос информации о запрашиваемой игре
+            }
+        }
     }
     public void click(int i, int j){
-        if(gameStart==true && your==true && field[i][j]==-1)
-        {
-            if(gamerCode==0)
+        if(gameStart==true && yourCode==cureCode && field[i][j]==-1){
+            if(yourCode==GamerCode.O){
                 field[i][j]=0;
-            if(gamerCode==1)
+            }
+            if(yourCode==GamerCode.X){
                 field[i][j]=1;
+            }
             gameFrame.updateField();
-            checkWin();
-            //gamerCode=Math.abs(gamerCode-1);
+            // передача хода
+            if(checkEndGame()==true){
+                // механизм завершения игры
+            }
         }
     }
     private int checkRow(int i){
@@ -74,24 +97,22 @@ public class OXGame {
         }
         return -1;
     }
-    private boolean win(int gamer){
+    private boolean endGame(int gamer){
         if(gamer!=-1){
             gameStart=false;
-            your=false;
-            gamerCode=-2;
-            gameFrame.updateFrame();
-            return true;
+            
         }
         return false;
     }
-    private void checkWin(){
-        if(win(checkX())){
-            return;
+    private boolean checkEndGame(){
+        if(checkX()!=-1){
+            return true;
         }
         for(int i=0; i<3; i++){
-            if(win(checkRow(i)) || win(checkColum(i)))
-                return;
+            if(checkRow(i)!=-1 || checkColum(i)!=-1)
+                return true;
         }
+        return false;
     }
     
     public static void main(String[] args) throws IOException {
