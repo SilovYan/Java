@@ -23,6 +23,7 @@ public class Gamer extends Thread{
    
     public Gamer(Game game, Socket s, int codeGamer){
         super();
+        System.out.println("Создан игрок");
         this.game=game;
         this.s=s;
         this.codeGamer=codeGamer;
@@ -31,26 +32,39 @@ public class Gamer extends Thread{
         setPriority(NORM_PRIORITY);
         start();
     }
-    public void tell(String str) throws IOException{
-        s.getOutputStream().write(str.getBytes());
+    public void tell(String str){
+        try{
+            System.out.println("Отправили "+str);
+            s.getOutputStream().write(str.getBytes());
+        }
+        catch(Exception ex){
+            System.out.println(ex.toString());
+        }
     }
     @Override
     public void run(){
         try{
             byte buf[] = new byte[64*1024];
-            int r = s.getInputStream().read(buf);
-            String data = new String(buf, 0, r);
-            StringBuilder sb=new StringBuilder(data);
-            if(sb.indexOf("Chat")==0){ //Определяем это чат или игра
-                if(codeGamer==0)
-                    sb=sb.replace(0, 5, "X");
-                if(codeGamer==1)
-                    sb=sb.replace(0, 5, "O");
-                game.tellAllChat(sb.toString());
-            }
-            else if(sb.indexOf("Game")==0){
-                sb=sb.replace(0, 5, "");
-                game.gameMoment(sb.toString(),codeGamer);
+            while(true){
+                int r = s.getInputStream().read(buf);
+                String data = new String(buf, 0, r);
+                System.out.println("Приняли "+data);
+                StringBuilder sb=new StringBuilder(data);
+                if(sb.indexOf("Chat")==0){ //Определяем это чат или игра
+                    if(codeGamer==0)
+                        sb=sb.replace(0, 5, "X: ");
+                    if(codeGamer==1)
+                        sb=sb.replace(0, 5, "O: ");
+                    System.out.println("Сообщение в чат: "+sb.toString());
+                    game.tellAllChat(sb.toString());
+                }
+                else if(sb.indexOf("Game")==0){
+                    sb=sb.replace(0, 5, "");
+                    System.out.println("Ход в виде "+sb.toString());
+                    game.gameMoment(sb.toString(),codeGamer);
+                }
+                else
+                    System.out.println("Не прошло парсинг");
             }
         }
         catch(Exception ex){

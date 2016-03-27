@@ -25,15 +25,24 @@ public class GameProcess {
     public void start(){
         if(gameStart==false){
             gameStart=true;
+            game.tellAllGame(getCureStats());
+            // Запустить игру надо как-то
         }
     }
     public String getCureStats(){
         StringBuilder res=new StringBuilder("");
         if(gameStart==true){
+            res.append("Game ");
             for(int line[]:field){
                 for(int t:line){
                     res.append(t+" ");
                 }
+            }
+            if(cureX){
+                res.append("X");
+            }
+            else{
+                res.append("O");
             }
         }
         else{
@@ -50,6 +59,7 @@ public class GameProcess {
                     res.append("а дружба");
             }
         }
+        System.out.println("cure stats: "+res.toString());
         return res.toString();
     }
     public boolean isCureX(){

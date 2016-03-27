@@ -14,7 +14,7 @@ import java.util.ArrayList;
  *
  * @author Силов
  */
-public class Game extends Thread{
+public class Game{
     Gamer X; // игрок за крестик
     Gamer O; // Игрок за нолик
     ArrayList<Gamer> watchers=new ArrayList(); // зрители
@@ -24,30 +24,37 @@ public class Game extends Thread{
         X=O=null;
         watchers.clear();
         process=new GameProcess(this);
-        setDaemon(true);
-        setPriority(NORM_PRIORITY);
-        start();
+
     }
     public boolean isFull(){
-        if(O!=null)
+        if(O!=null){
+            System.out.println("Игра полная");
             return true;
+        }
         return false;
     }
     public void addGamer(Socket s){
         if(X==null)
             X=new Gamer(this,s,0);
         else if(O==null)
+        {
             O=new Gamer(this,s,1);
+            process.start();
+        }
     }
     public void addWatcher(Socket s){
         watchers.add(new Gamer(this,s,2));
     }
-    public void tellAllGame(String str) throws IOException{
+    public void tellAllGame(String str){
         X.tell(str);
         O.tell(str);
         for(Gamer t: watchers){
             t.tell(str);
         }
+    }
+    public void tellAllGameStart() throws IOException{
+        X.tell("Игрок X");
+        O.tell("Игрок О");
     }
     public void tellAllChat(String str) throws IOException{
         X.tell(str);
@@ -60,15 +67,5 @@ public class Game extends Thread{
         String[] parts=str.split(" ");
         process.checkHop((int)Integer.parseInt(parts[0]), (int)Integer.parseInt(parts[1]), codeGamer);
         tellAllGame(process.getCureStats());
-    }
-    @Override
-    public void run(){
-        try{
-            while(O==null);
-            process.start();
-        }
-        catch(Exception ex){
-            
-        }
     }
 }

@@ -34,22 +34,38 @@ public class OXGameFrame extends javax.swing.JFrame {
         initFrame();
         this.game.addFrame(this);
     }
-    public void updateField(){
-        int[][] field=game.getFiled();
-        for(int i=0; i<3; i++)
+    public void gameStart(char gamer){
+        this.setTitle("Вы играете за"+gamer);
+        if(gamer=='X')
+            statusLebel.setText("Статус: Ваш ход");
+        if(gamer=='O')
+            statusLebel.setText("Статус: Ход противника");
+        this.startButton.setEnabled(false);
+        this.gameComboBox.setEnabled(false);
+        this.userStatus.setEnabled(false);
+        this.leaveButton.setEnabled(true);
+        this.chatTextField.setEnabled(true);
+        this.sendButton.setEnabled(true);
+    }
+    public void endGame(String text){
+        this.statusLebel.setText(text);
+    }
+    public void updateChat(String text){
+        chatTextArea.setText(chatTextArea.getText()+text+"\n");
+    }
+    public void updateField(String str){
+        String[] parts=str.split(" ");
+        for(int i=0; i<3; i++){
             for(int j=0; j<3; j++){
-                switch(field[i][j]){
-                    case -1:
-                        fieldButtons[i][j].setText("");
-                        break;
-                    case 0:
-                        fieldButtons[i][j].setText("O");
-                        break;
-                    case 1:
-                        fieldButtons[i][j].setText("X");
-                        break;
-                }
+                if(parts[3*i+j].compareTo("-1")==0)
+                    fieldButtons[i][j].setText("");
+                else if(parts[3*i+j].compareTo("0")==0)
+                    fieldButtons[i][j].setText("X");
+                else if(parts[3*i+j].compareTo("1")==0)
+                    fieldButtons[i][j].setText("O");
             }
+        }
+        this.statusLebel.setText("Статус: Ход игрока "+parts[9]);
     }
     public void updateFrame(){
         
@@ -128,6 +144,11 @@ public class OXGameFrame extends javax.swing.JFrame {
         chatTextField.setToolTipText("Введите сообщение");
 
         sendButton.setText("Отпр.");
+        sendButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                sendButtonActionPerformed(evt);
+            }
+        });
 
         chatTextArea.setColumns(20);
         chatTextArea.setRows(5);
@@ -201,8 +222,19 @@ public class OXGameFrame extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void startButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_startButtonActionPerformed
-                // TODO add your handling code here:
+        this.setTitle("Ожидание начала игры");
+        try {
+            game.startGame(-1);
+        } catch (IOException ex) {
+            Logger.getLogger(OXGameFrame.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_startButtonActionPerformed
+
+    private void sendButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sendButtonActionPerformed
+        game.sendChat(this.chatTextField.getText());
+        this.chatTextField.setText("");
+        // TODO add your handling code here:
+    }//GEN-LAST:event_sendButtonActionPerformed
 
     /**
      * @param args the command line arguments

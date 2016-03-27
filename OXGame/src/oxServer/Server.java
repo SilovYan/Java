@@ -11,6 +11,8 @@ import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -48,25 +50,40 @@ public class Server extends Thread{
                     countGames++;
                 }
                 else if(games.get(countGames-1).isFull()==true){
+                    //games.get(countGames-1).start();
                     games.add(new Game());
                     countGames++;
                 }
+                System.out.println("Ждем подключения ");
                 Socket client=server.accept();
+                System.out.println("Кто-то подключился ");
                 InputStream is=client.getInputStream();
                 n=is.read(buf);
                 String str=new String(buf, 0, n);
+                System.out.println("Приняли "+str);
                 //is.close(); // надо ли тут закрывать поток?
                 if(str.compareTo("Игрок")==0)
                     games.get(countGames-1).addGamer(client);
                 else{
                     String[] parts=str.split(" ");
-                    Integer k=Integer.parseInt(parts[0]);
+                    Integer k=Integer.parseInt(parts[1]);
                     games.get(k).addWatcher(client);
                 }
                 System.out.println("one connect");
             }
         }
-        catch(Exception e)
-        {System.out.println("init error1: "+e);} // вывод исключений
+        catch(Exception ex) // вывод исключений
+        {
+            System.out.println("init error1: "+ex);
+        } 
+    }
+    
+    public static void main(String[] args){
+        Server server=new Server();
+        try {
+            server.join();
+        } catch (InterruptedException ex) {
+            Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 }
