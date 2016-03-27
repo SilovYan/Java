@@ -21,10 +21,9 @@ public class Game extends Thread{
     GameProcess process;
     
     public Game(){
-        process=new GameProcess();
         X=O=null;
         watchers.clear();
-        
+        process=new GameProcess(this);
         setDaemon(true);
         setPriority(NORM_PRIORITY);
         start();
@@ -43,17 +42,30 @@ public class Game extends Thread{
     public void addWatcher(Socket s){
         watchers.add(new Gamer(this,s,2));
     }
-    public void tellAll(String str) throws IOException{
+    public void tellAllGame(String str) throws IOException{
         X.tell(str);
         O.tell(str);
         for(Gamer t: watchers){
             t.tell(str);
         }
     }
+    public void tellAllChat(String str) throws IOException{
+        X.tell(str);
+        O.tell(str);
+        for(Gamer t: watchers){
+            t.tell(str);
+        }
+    }
+    public void gameMoment(String str, int codeGamer) throws IOException{
+        String[] parts=str.split(" ");
+        process.checkHop((int)Integer.parseInt(parts[0]), (int)Integer.parseInt(parts[1]), codeGamer);
+        tellAllGame(process.getCureStats());
+    }
     @Override
     public void run(){
         try{
-            
+            while(O==null);
+            process.start();
         }
         catch(Exception ex){
             

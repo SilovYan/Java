@@ -40,9 +40,18 @@ public class Gamer extends Thread{
             byte buf[] = new byte[64*1024];
             int r = s.getInputStream().read(buf);
             String data = new String(buf, 0, r);
-             // выводим ответ в консоль
-            //this.Analize(data);
-            
+            StringBuilder sb=new StringBuilder(data);
+            if(sb.indexOf("Chat")==0){ //Определяем это чат или игра
+                if(codeGamer==0)
+                    sb=sb.replace(0, 5, "X");
+                if(codeGamer==1)
+                    sb=sb.replace(0, 5, "O");
+                game.tellAllChat(sb.toString());
+            }
+            else if(sb.indexOf("Game")==0){
+                sb=sb.replace(0, 5, "");
+                game.gameMoment(sb.toString(),codeGamer);
+            }
         }
         catch(Exception ex){
             System.out.println("init error2: "+ex);
