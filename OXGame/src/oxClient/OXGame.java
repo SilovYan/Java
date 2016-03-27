@@ -67,7 +67,7 @@ public class OXGame extends Thread{
                 if(parts[1].compareTo("X")==0){
                     gameFrame.gameStart('X');
                 }
-                else if(parts[1].compareTo("O")==0){
+                else {
                     gameFrame.gameStart('O');
                 }
                 break;

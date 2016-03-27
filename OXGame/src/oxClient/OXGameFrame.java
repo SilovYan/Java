@@ -35,7 +35,7 @@ public class OXGameFrame extends javax.swing.JFrame {
         this.game.addFrame(this);
     }
     public void gameStart(char gamer){
-        this.setTitle("Вы играете за"+gamer);
+        this.setTitle("Вы играете за "+gamer);
         if(gamer=='X')
             statusLebel.setText("Статус: Ваш ход");
         if(gamer=='O')
@@ -59,7 +59,7 @@ public class OXGameFrame extends javax.swing.JFrame {
             for(int j=0; j<3; j++){
                 if(parts[3*i+j].compareTo("-1")==0)
                     fieldButtons[i][j].setText("");
-                else if(parts[3*i+j].compareTo("0")==0)
+                else if(parts[3*i+j].compareTo("0")==0) 
                     fieldButtons[i][j].setText("X");
                 else if(parts[3*i+j].compareTo("1")==0)
                     fieldButtons[i][j].setText("O");

@@ -39,6 +39,7 @@ public class Game{
         else if(O==null)
         {
             O=new Gamer(this,s,1);
+            tellAllGameStart();
             process.start();
         }
     }
@@ -52,9 +53,9 @@ public class Game{
             t.tell(str);
         }
     }
-    public void tellAllGameStart() throws IOException{
+    public void tellAllGameStart(){
         X.tell("Игрок X");
-        O.tell("Игрок О");
+        O.tell("Игрок O");
     }
     public void tellAllChat(String str) throws IOException{
         X.tell(str);
@@ -66,6 +67,10 @@ public class Game{
     public void gameMoment(String str, int codeGamer) throws IOException{
         String[] parts=str.split(" ");
         process.checkHop((int)Integer.parseInt(parts[0]), (int)Integer.parseInt(parts[1]), codeGamer);
-        tellAllGame(process.getCureStats());
+        tellAllGame(process.getCureStatField());
+        if(process.isStart()==false){
+            tellAllGame(process.getCureStats());
+        }
+        
     }
 }

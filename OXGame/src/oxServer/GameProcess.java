@@ -29,23 +29,27 @@ public class GameProcess {
             // Запустить игру надо как-то
         }
     }
-    public String getCureStats(){
+    public String getCureStatField(){
         StringBuilder res=new StringBuilder("");
-        if(gameStart==true){
-            res.append("Game ");
-            for(int line[]:field){
-                for(int t:line){
-                    res.append(t+" ");
-                }
-            }
-            if(cureX){
-                res.append("X");
-            }
-            else{
-                res.append("O");
+        res.append("Game ");
+        for(int line[]:field){
+            for(int t:line){
+                res.append(t+" ");
             }
         }
+        if(cureX){
+            res.append("X");
+        }
         else{
+            res.append("O");
+        }
+        System.out.println("cure stats: "+res.toString());
+        return res.toString();
+    }
+    public String getCureStats(){
+        StringBuilder res=new StringBuilder("");
+        if(gameStart==false)
+        {
             if(codeWin==-1){
                 res.append("Ожидание игроков");
             }
@@ -57,16 +61,19 @@ public class GameProcess {
                     res.append(" игрок O");
                 else
                     res.append("а дружба");
+                System.out.println("cure stats: "+res.toString());
             }
         }
-        System.out.println("cure stats: "+res.toString());
         return res.toString();
+    }
+    public boolean isStart(){
+        return gameStart;
     }
     public boolean isCureX(){
         return cureX;
     }
     public boolean checkHop(int x, int y, int codeSender){
-        if(field[x][y]==-1){
+        if(field[x][y]==-1 && (codeSender==0)==cureX){
             field[x][y]=codeSender;
             cureX=!cureX;
             checkEndGame();
