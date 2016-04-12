@@ -13,6 +13,7 @@ public class GameProcess {
     private Game game;
     private boolean gameStart=false;
     private int codeWin=-1;
+    private boolean end=false;
     private boolean cureX=true;
     private int[][] field=new int[3][3];
     public GameProcess(Game game){
@@ -112,12 +113,12 @@ public class GameProcess {
                     return false;
         return true;
     }
-    private boolean endGame(int gamer){
+    private void endGame(int gamer){
         if(gamer!=-1){
             gameStart=false;
             codeWin=gamer;
+            end=true;
         }
-        return false;
     }
     private void checkEndGame(){
         if(checkX()!=-1){
@@ -133,5 +134,9 @@ public class GameProcess {
         if(checkFull()==true){
             endGame(-1);
         }
+    }
+
+    boolean isEnd() {
+        return end;
     }
 }

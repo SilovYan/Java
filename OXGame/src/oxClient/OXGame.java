@@ -8,6 +8,8 @@ package oxClient;
 import java.awt.GridLayout;
 import java.io.IOException;
 import java.net.Socket;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -36,7 +38,7 @@ public class OXGame extends Thread{
             s.getOutputStream().write("Игрок".getBytes());
         }
         else{
-            System.out.println("Отправили Зритель"+needGame);
+            System.out.println("Отправили Зритель "+needGame);
             s.getOutputStream().write(("Зритель "+needGame).getBytes());
         }
         start();
@@ -63,6 +65,10 @@ public class OXGame extends Thread{
     private void Analize(String str){
         String[] parts=str.split(" ");
         switch(parts[0]){
+            case "Зритель":
+                gameFrame.setTitle("Зритель");
+                click(0,0);
+                break;
             case "Игрок":
                 if(parts[1].compareTo("X")==0){
                     gameFrame.gameStart('X');
@@ -79,7 +85,14 @@ public class OXGame extends Thread{
                 break;
             case "Победил":
             case "Победила":
+            {
                 gameFrame.endGame(str);
+                try {
+                    s.close();
+                } catch (IOException ex) {
+                    Logger.getLogger(OXGame.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
             case "Game":
                 gameFrame.updateField(str.replaceFirst("Game ", ""));
         }
@@ -105,6 +118,7 @@ public class OXGame extends Thread{
         OXGame game=new OXGame();
         OXGameFrame gameFrame=new OXGameFrame(game);
         gameFrame.setVisible(true);
+        new OXGameFrame(new OXGame()).setVisible(true);
     }
     
 }

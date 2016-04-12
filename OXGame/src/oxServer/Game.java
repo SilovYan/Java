@@ -71,6 +71,12 @@ public class Game{
         if(process.isStart()==false){
             tellAllGame(process.getCureStats());
         }
-        
+        if(process.isEnd()==true){
+            X.close();
+            O.close();
+            for(Gamer t: watchers){
+            t.close();
+        }
+        }
     }
 }

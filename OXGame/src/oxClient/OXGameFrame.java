@@ -41,9 +41,7 @@ public class OXGameFrame extends javax.swing.JFrame {
         if(gamer=='O')
             statusLebel.setText("Статус: Ход противника");
         this.startButton.setEnabled(false);
-        this.gameComboBox.setEnabled(false);
         this.userStatus.setEnabled(false);
-        this.leaveButton.setEnabled(true);
         this.chatTextField.setEnabled(true);
         this.sendButton.setEnabled(true);
     }
@@ -66,6 +64,10 @@ public class OXGameFrame extends javax.swing.JFrame {
             }
         }
         this.statusLebel.setText("Статус: Ход игрока "+parts[9]);
+    }
+    @Override
+    public void setTitle(String str){
+        super.setTitle(str);
     }
     public void updateFrame(){
         
@@ -95,11 +97,9 @@ public class OXGameFrame extends javax.swing.JFrame {
         this.GameField.setSize(210,210);
     }
     private void initFrame(){
-        this.gameComboBox.setEnabled(false);
         this.chatTextArea.setEnabled(false);
         this.chatTextField.setEnabled(false);
         this.sendButton.setEnabled(false);
-        this.leaveButton.setEnabled(false);
     }
     /**
      * This method is called from within the constructor to initialize the form.
@@ -113,14 +113,13 @@ public class OXGameFrame extends javax.swing.JFrame {
         statusLebel = new javax.swing.JLabel();
         startButton = new javax.swing.JButton();
         userStatus = new javax.swing.JComboBox<>();
-        gameComboBox = new javax.swing.JComboBox<>();
         jLabel2 = new javax.swing.JLabel();
-        leaveButton = new javax.swing.JButton();
         exitButton = new javax.swing.JButton();
         chatTextField = new javax.swing.JTextField();
         sendButton = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         chatTextArea = new javax.swing.JTextArea();
+        jSpinner1 = new javax.swing.JSpinner();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -135,9 +134,7 @@ public class OXGameFrame extends javax.swing.JFrame {
 
         userStatus.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Игрок", "Зритель" }));
 
-        jLabel2.setText("Список игр");
-
-        leaveButton.setText("Сдаться");
+        jLabel2.setText("Номер игры");
 
         exitButton.setText("Выйти");
 
@@ -154,6 +151,10 @@ public class OXGameFrame extends javax.swing.JFrame {
         chatTextArea.setRows(5);
         jScrollPane1.setViewportView(chatTextArea);
 
+        jSpinner1.setAlignmentX(1.0F);
+        jSpinner1.setAlignmentY(1.0F);
+        jSpinner1.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -168,18 +169,17 @@ public class OXGameFrame extends javax.swing.JFrame {
                         .addGap(0, 0, Short.MAX_VALUE)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                                     .addComponent(userStatus, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addComponent(jLabel2)
-                                    .addComponent(gameComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addGroup(layout.createSequentialGroup()
                                         .addGap(10, 10, 10)
-                                        .addComponent(exitButton)))
+                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addComponent(exitButton)
+                                            .addComponent(jSpinner1))))
                                 .addGap(30, 30, 30))
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(startButton)
-                                    .addComponent(leaveButton))
+                                .addComponent(startButton)
                                 .addContainerGap())))
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
@@ -197,12 +197,10 @@ public class OXGameFrame extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel2)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(gameComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jSpinner1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(71, 71, 71)
                 .addComponent(startButton)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(leaveButton)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 8, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 37, Short.MAX_VALUE)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 105, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -218,13 +216,19 @@ public class OXGameFrame extends javax.swing.JFrame {
                         .addContainerGap())))
         );
 
+        jLabel2.getAccessibleContext().setAccessibleName("Номер игры");
+        jLabel2.getAccessibleContext().setAccessibleDescription("");
+
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
     private void startButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_startButtonActionPerformed
         this.setTitle("Ожидание начала игры");
         try {
-            game.startGame(-1);
+            if(this.userStatus.getSelectedIndex()==0)
+                game.startGame(-1);
+            else
+                game.startGame(Integer.parseInt(this.jSpinner1.getValue().toString()));
         } catch (IOException ex) {
             Logger.getLogger(OXGameFrame.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -278,10 +282,9 @@ public class OXGameFrame extends javax.swing.JFrame {
     private javax.swing.JTextArea chatTextArea;
     private javax.swing.JTextField chatTextField;
     private javax.swing.JButton exitButton;
-    private javax.swing.JComboBox<String> gameComboBox;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JButton leaveButton;
+    private javax.swing.JSpinner jSpinner1;
     private javax.swing.JButton sendButton;
     private javax.swing.JButton startButton;
     private javax.swing.JLabel statusLebel;

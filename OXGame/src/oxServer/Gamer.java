@@ -19,6 +19,7 @@ import java.util.logging.Logger;
 public class Gamer extends Thread{
     private Game game;
     private Socket s;
+    private boolean notEnd=true;
     private int codeGamer; // 0 - X, 1 - O, 2 - Watch
    
     public Gamer(Game game, Socket s, int codeGamer){
@@ -27,7 +28,8 @@ public class Gamer extends Thread{
         this.game=game;
         this.s=s;
         this.codeGamer=codeGamer;
-        
+        if(codeGamer==2)
+            tell("Зритель");
         setDaemon(true);
         setPriority(NORM_PRIORITY);
         start();
@@ -45,7 +47,7 @@ public class Gamer extends Thread{
     public void run(){
         try{
             byte buf[] = new byte[64*1024];
-            while(true){
+            while(notEnd){
                 int r = s.getInputStream().read(buf);
                 String data = new String(buf, 0, r);
                 System.out.println("Приняли "+data);
@@ -55,6 +57,8 @@ public class Gamer extends Thread{
                         sb=sb.replace(0, 5, "X: ");
                     if(codeGamer==1)
                         sb=sb.replace(0, 5, "O: ");
+                    if(codeGamer==2)
+                        sb=sb.replace(0,5,"W: ");
                     System.out.println("Сообщение в чат: "+sb.toString());
                     game.tellAllChat(sb.toString());
                 }
@@ -69,6 +73,15 @@ public class Gamer extends Thread{
         }
         catch(Exception ex){
             System.out.println("init error2: "+ex);
+        }
+    }
+
+    void close() {
+        notEnd=false;
+        try {
+            s.close();
+        } catch (IOException ex) {
+            Logger.getLogger(Gamer.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 }

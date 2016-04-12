@@ -67,7 +67,8 @@ public class Server extends Thread{
                 else{
                     String[] parts=str.split(" ");
                     Integer k=Integer.parseInt(parts[1]);
-                    games.get(k).addWatcher(client);
+                    if(k<games.size() && k>-1)
+                        games.get(k).addWatcher(client);
                 }
                 System.out.println("one connect");
             }
